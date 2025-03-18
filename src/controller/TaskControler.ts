@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import {taskService} from "../service/taskService";
+import Task from "../models/taskmodel";
 
 class TaskController {
 
@@ -24,6 +25,59 @@ class TaskController {
    res.status(200).json(tasks);
   } catch (error) {
    res.status(500).json({ message: 'Error fetching tasks', error });
+  }
+ }
+ public async updateTask(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  const { title, description, status } = req.body;
+
+  try {
+   console.log('Request Body:', req.body);
+
+   if (!title && !description && !status) {
+    res.status(400).json({ message: 'No fields to update provided' });
+    return;
+   }
+
+   // Шукаємо таску за id
+   const existingTask = await Task.findByPk(id);
+   if (!existingTask) {
+    res.status(404).json({ message: `Task with ID ${id} not found` });
+    return;
+   }
+
+   console.log('Existing Task:', existingTask);
+
+
+   // if (title) existingTask.title = title;
+   // if (description) existingTask.description = description;
+   // if (status !== undefined) existingTask.status = status;
+
+
+   await existingTask.save();
+
+
+   console.log('Updated Task:', existingTask);
+
+   res.status(200).json(existingTask);
+  } catch (error) {
+   res.status(500).json({message: 'Error updating task', error});
+  }}
+ public async deleteTask(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+
+  try {
+   const existingTask = await Task.findByPk(id);
+   if (!existingTask) {
+    res.status(404).json({ message: `Task with ID ${id} not found` });
+    return;
+   }
+
+   await existingTask.destroy();
+
+   res.status(200).json({ message: `Task with ID ${id} deleted successfully` });
+  } catch (error) {
+   res.status(500).json({ message: 'Error deleting task', error });
   }
  }
 
