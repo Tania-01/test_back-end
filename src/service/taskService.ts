@@ -7,8 +7,8 @@ class TaskService {
         return taskRepository.createTask(title, description, status);
     }
 
-    public async getTasks() {
-        return taskRepository.getTasks();
+    async getTasks(status?: string) {
+        return taskRepository.getTasks(status);
     }
 }
 

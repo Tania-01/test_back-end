@@ -21,7 +21,8 @@ class TaskController {
 
  public async getTasks(req: Request, res: Response): Promise<void> {
   try {
-   const tasks = await taskService.getTasks();
+   const { status } = req.query;
+   const tasks = await taskService.getTasks(status as string);
    res.status(200).json(tasks);
   } catch (error) {
    res.status(500).json({ message: 'Error fetching tasks', error });
@@ -39,7 +40,6 @@ class TaskController {
     return;
    }
 
-   // Шукаємо таску за id
    const existingTask = await Task.findByPk(id);
    if (!existingTask) {
     res.status(404).json({ message: `Task with ID ${id} not found` });

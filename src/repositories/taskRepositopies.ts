@@ -8,9 +8,14 @@ class TaskRepository {
     }
 
 
-    public async getTasks() {
-        return Task.findAll();
+    async getTasks(status?: string) {
+        const whereClause: any = {};
+        if (status) {
+            whereClause.status = status;
+        }
+
+        return Task.findAll({ where: whereClause });
     }
-}
+};
 
 export const taskRepository = new TaskRepository();
